@@ -2,6 +2,7 @@ import './App.scss';
 import Combobox from 'react-widgets/Combobox';
 import 'react-widgets/scss/styles.scss';
 import { useState, useEffect } from 'react';
+import {ComboBox as ComboBoxComponent} from './ComboBox'
 
 const renderListItem = (x) => {
 	let src = x.item.currency.slice(0, 2).toLowerCase();
@@ -135,6 +136,7 @@ function App() {
 				}}
 				value={counterCurrency}
 			/>
+			{/* <ComboBoxComponent/> */}
 			{display && string && (
 				<p>
 					Expires in: {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, '0')}
