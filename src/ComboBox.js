@@ -1,15 +1,15 @@
 import { useRef, useState, useLayoutEffect, useEffect } from 'react';
 import './comboBox.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faAngleDown, faAngleUp } from '@fortawesome/free-solid-svg-icons';
+import { faAngleDown, faAngleUp, faSpinner } from '@fortawesome/free-solid-svg-icons';
 
-export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, onInputChange, onDropdownClosed, selectedValue }) {
+export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, onInputChange, onDropdownClosed, selectedValue, isLoading }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const ComboBoxRef = useRef(null);
 	const wrapperRef = useRef(null);
 	const DropdownRef = useRef(null);
 	const inputRef = useRef(null);
-	const [index, setIndex] = useState(-1);
+	const [index, setIndex] = useState(-2);
 
 	function resizeSelectBoxItems() {
 		let selectboxHeader = ComboBoxRef.current;
@@ -47,6 +47,7 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 	useEffect(() => {
 		!isOpen && onDropdownClosed && onDropdownClosed();
 		isOpen && inputRef && inputRef.current.focus();
+		setIndex(-2)
 	}, [isOpen]);
 
 	useEffect(() => {
@@ -60,7 +61,7 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 	const onKeyDown = (e, x) => {
 		switch (e.key) {
 			case 'ArrowDown':
-				setIndex((prev) => (dataSource && prev < dataSource.length ? prev + 1 : 0));
+				setIndex((prev) => (dataSource && prev < dataSource.length - 1 ? prev + 1 : prev));
 				break;
 			case 'ArrowUp':
 				setIndex((prev) => (prev > 0 ? prev - 1 : prev));
@@ -69,7 +70,7 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 				handleClick(e, x);
 				break;
 			case 'Tab':
-				setIsOpen(false)
+				setIsOpen(false);
 				break;
 			default:
 		}
@@ -81,34 +82,48 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 	};
 
 	return (
-		<div ref={wrapperRef}>
-			<div ref={ComboBoxRef} className="comboBox" onKeyDown={onKeyDown}>
-				<input
-					ref={inputRef}
-					onChange={onInputChange}
-					value={inputValue ? inputValue : ''}
-					className="comboBox__input"
-					placeholder="Enter currency..."
-					onFocus={(e) => {
-						setIsOpen(true);
-					}}
-				></input>
+		<div className="comboBoxWrapper" ref={wrapperRef}>
+			<div ref={ComboBoxRef} className={`comboBox ${isOpen ? 'open' : ''}`} onKeyDown={onKeyDown}>
+				{isOpen ? (
+					<input
+						onKeyDown={onKeyDown}
+						ref={inputRef}
+						onChange={onInputChange}
+						value={inputValue ? inputValue : ''}
+						className="comboBox__input"
+						placeholder="Enter currency..."
+						onFocus={(e) => {
+							setIsOpen(true);
+						}}
+					></input>
+				) : (
+					<div
+						style={{ width: '100%' }}
+						onClick={() => {
+							setIsOpen(true);
+						}}
+					>
+						{selectedValue && listItemRender(selectedValue)}
+					</div>
+				)}
 				<button
 					className="comboButton"
 					onClick={() => {
 						setIsOpen((prev) => !prev);
 					}}
 				>
-					<FontAwesomeIcon icon={isOpen ? faAngleUp : faAngleDown} />
+					{!isLoading ? <FontAwesomeIcon icon={isOpen ? faAngleUp : faAngleDown} /> : <FontAwesomeIcon className='spinner' icon={faSpinner} />}
 				</button>
 			</div>
 			{isOpen && (
-				<div ref={DropdownRef} className="dropDown">
+				<div ref={DropdownRef} className={`dropDown`}>
 					{dataSource.length > 0 ? (
 						dataSource.map((x, i) => {
 							return (
 								<div
-									onKeyDown={(e) => {onKeyDown(e, x)}}
+									onKeyDown={(e) => {
+										onKeyDown(e, x);
+									}}
 									key={i}
 									tabIndex={i}
 									className={`dropDown__listItem ${x === selectedValue ? 'active' : ''}`}

@@ -1,9 +1,12 @@
+.comboBoxWrapper {
+	margin: 0.75rem 0rem 0rem 0rem;
+}
+
 .comboBox {
 	height: 2rem;
 	display: flex;
 	align-items: center;
-	border: 1px solid;
-	border-radius: 3px;
+	overflow: hidden;
 	&__input {
 		width: 100%;
 		height: 80%;
@@ -14,17 +17,21 @@
 	}
 }
 
-.comboButton{
-  margin: auto;
-  height: 100%;
-  border: none;
-  background-color: transparent;
+.comboButton {
+	height: 100%;
+	align-items: center;
+	display: flex;
+	padding: 0px 5px;
+	border: none;
+	background-color: transparent;
+	margin-left: auto;
 }
 
 .dropDown {
-	border-radius: 3px;
-	border: 1px solid black;
-	max-height: 12rem;
+	border: 1px solid;
+	border-top: none;
+	border-radius: 0px 0px 3px 3px;
+	max-height: 15rem;
 	position: absolute;
 	width: 25rem;
 	overflow: auto;
@@ -34,14 +41,35 @@
 	display: flex;
 	flex-direction: column;
 	&__listItem {
-    display: flex;
-    align-items: center;
+		display: flex;
+		align-items: center;
 		&:hover {
 			background-color: gray;
 		}
 	}
 }
 
-.active{
-  background-color: gray;
+.active {
+	background-color: gray;
+}
+
+.open {
+	border: 1px solid;
+	border-bottom: none;
+}
+.spinner{
+  animation-name: spin;
+  animation-duration: 1500ms;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear; 
+}
+
+
+@keyframes spin {
+  from {
+      transform:rotate(0deg);
+  }
+  to {
+      transform:rotate(360deg);
+  }
 }

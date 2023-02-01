@@ -1,12 +1,14 @@
 import './App.scss';
 import { useState, useEffect } from 'react';
 import { ComboBox as ComboBoxComponent } from './ComboBox';
+import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const listItemRender = (item) => {
 	let src = item.currency.slice(0, 2).toLowerCase();
 
 	return (
-		<div key={item.currency} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+		<div key={item.currency} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', margin: '0.75rem 0.25rem' }}>
 			<img src={`https://flagcdn.com/${src}.svg`} width="48" height="32" alt=""></img>
 			<p>{item.longName}</p>
 		</div>
@@ -84,7 +86,7 @@ function App() {
 		if (rates && counterCurrency) {
 			setConversionRate(rates[counterCurrency.currency]);
 			setDisplay(true);
-			setTime(6);
+			setTime(60);
 		}
 	}, [rates]);
 
@@ -97,7 +99,7 @@ function App() {
 
 	useEffect(() => {
 		if (baseCurrency && conversionRate && counterCurrency && value && display) {
-			setString(`${value}  ${baseCurrency.currency} is equivalent to ${(conversionRate * value).toFixed(2)} ${counterCurrency.currency}`);
+			setString(`${value}  ${baseCurrency.currency} is equivalent to ${(conversionRate * value).toFixed(0)} ${counterCurrency.currency}`);
 		} else {
 			setString(null);
 		}
@@ -110,16 +112,24 @@ function App() {
 
 	return (
 		<div className="App">
-			<input
-				type={'number'}
-				value={value}
-				onChange={(e) => {
-					setDisplay(false);
-					setConversionRate(null);
-					setValue(e.target.value);
-				}}
-			/>
-			<button onClick={handleSwap}>SWAP</button>
+			<div className="inputWrapper">
+				<p>Amount</p>
+				<div className="Amount">
+					<input
+						className="input"
+						type="number"
+						value={value}
+						onChange={(e) => {
+							setDisplay(false);
+							setConversionRate(null);
+							setValue(e.target.value);
+						}}
+					/>
+					<button className="swapButton" onClick={handleSwap}>
+						<FontAwesomeIcon icon={faExchangeAlt} />{' '}
+					</button>
+				</div>
+			</div>
 			<ComboBoxComponent
 				dataSource={filteredCurrencies}
 				listItemRender={listItemRender}
@@ -137,6 +147,7 @@ function App() {
 				inputValue={inputValue}
 				onDropdownClosed={onDropdownClosed}
 				selectedValue={baseCurrency}
+				isLoading={loading}
 			/>
 
 			<br></br>
@@ -161,16 +172,22 @@ function App() {
 					setFilteredCurrencies(currencies);
 				}}
 				selectedValue={counterCurrency}
+				isLoading={loading}
 			/>
+			<div className="conversionMessage">{string && display && <p >{string}</p>}</div>
 
 			{display && string && (
-				<p>
-					Expires in: {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, '0')}
-				</p>
+				<div className="timer">
+					<p>Expires in:</p>
+
+					<p>{Math.floor(time / 60)}'</p>
+					<p>{(time % 60).toString().padStart(2, '0')}''</p>
+				</div>
 			)}
-			{string && display && <p>{string}</p>}
+			<button className="convertButton" onClick={fetchConversion}>
+				Convert
+			</button>
 			{error && <p>something went wrong...</p>}
-			<button onClick={fetchConversion}>Convert</button>
 		</div>
 	);
 }
