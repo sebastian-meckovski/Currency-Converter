@@ -136,7 +136,7 @@ function App() {
 				listItemRender={listItemRender}
 				onItemClick={(e, item) => {
 					setBaseCurrency(item);
-					setInputValue(item.longName);
+					item && setInputValue(item.longName);
 					setDisplay(false);
 					setString(null);
 				}}
@@ -158,7 +158,7 @@ function App() {
 				listItemRender={listItemRender}
 				onItemClick={(x, item) => {
 					setCounterCurrency(item);
-					setInputValue1(item.longName);
+					item && setInputValue1(item.longName);
 					setDisplay(false);
 					setString(null);
 				}}

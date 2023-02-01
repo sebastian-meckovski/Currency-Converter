@@ -47,8 +47,8 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 	useEffect(() => {
 		!isOpen && onDropdownClosed && onDropdownClosed();
 		isOpen && inputRef && inputRef.current.focus();
-		setIndex(-2)
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		setIndex(-2);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isOpen]);
 
 	useEffect(() => {
@@ -98,13 +98,12 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 						}}
 					></input>
 				) : (
-					
 					<div
 						style={{ width: '100%' }}
 						onClick={() => {
 							setIsOpen(true);
 						}}
-					>hello
+					>
 						{selectedValue && listItemRender(selectedValue)}
 					</div>
 				)}
@@ -114,7 +113,11 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 						setIsOpen((prev) => !prev);
 					}}
 				>
-					{!isLoading ? <FontAwesomeIcon icon={isOpen ? faAngleUp : faAngleDown} /> : <FontAwesomeIcon className='spinner' icon={faSpinner} />}
+					{!isLoading ? (
+						<FontAwesomeIcon icon={isOpen ? faAngleUp : faAngleDown} />
+					) : (
+						<FontAwesomeIcon className="spinner" icon={faSpinner} />
+					)}
 				</button>
 			</div>
 			{isOpen && (
