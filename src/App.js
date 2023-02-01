@@ -72,13 +72,12 @@ function App() {
 	};
 
 	useEffect(() => {
-    console.log('hello')
 		if (rates && counterCurrency) {
 			setConversionRate(rates[counterCurrency.currency]);
 			setDisplay(true);
 			setTime(60);
 		}
-	},[rates]);
+	}, [rates]);
 
 	const handleSwap = () => {
 		setDisplay(false);
