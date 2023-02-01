@@ -9,6 +9,7 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 	const wrapperRef = useRef(null);
 	const DropdownRef = useRef(null);
 	const inputRef = useRef(null);
+	const [index, setIndex] = useState(-1);
 
 	function resizeSelectBoxItems() {
 		let selectboxHeader = ComboBoxRef.current;
@@ -48,9 +49,40 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 		isOpen && inputRef && inputRef.current.focus();
 	}, [isOpen]);
 
+	useEffect(() => {
+		let listitem;
+		if (DropdownRef.current) {
+			listitem = DropdownRef.current.children[index];
+			listitem.focus();
+		}
+	}, [index]);
+
+	const onKeyDown = (e, x) => {
+		switch (e.key) {
+			case 'ArrowDown':
+				setIndex((prev) => (dataSource && prev < dataSource.length ? prev + 1 : 0));
+				break;
+			case 'ArrowUp':
+				setIndex((prev) => (prev > 0 ? prev - 1 : prev));
+				break;
+			case 'Enter':
+				handleClick(e, x);
+				break;
+			case 'Tab':
+				setIsOpen(false)
+				break;
+			default:
+		}
+	};
+
+	const handleClick = (e, x) => {
+		onItemClick(e, x);
+		setIsOpen(false);
+	};
+
 	return (
 		<div ref={wrapperRef}>
-			<div ref={ComboBoxRef} className="comboBox" onClick={() => {}}>
+			<div ref={ComboBoxRef} className="comboBox" onKeyDown={onKeyDown}>
 				<input
 					ref={inputRef}
 					onChange={onInputChange}
@@ -61,31 +93,36 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 						setIsOpen(true);
 					}}
 				></input>
-				<button className='comboButton' 
+				<button
+					className="comboButton"
 					onClick={() => {
 						setIsOpen((prev) => !prev);
 					}}
 				>
-					<FontAwesomeIcon icon={isOpen ? faAngleUp : faAngleDown}/>
+					<FontAwesomeIcon icon={isOpen ? faAngleUp : faAngleDown} />
 				</button>
 			</div>
 			{isOpen && (
 				<div ref={DropdownRef} className="dropDown">
-					{dataSource.length > 0 ?
+					{dataSource.length > 0 ? (
 						dataSource.map((x, i) => {
 							return (
 								<div
+									onKeyDown={(e) => {onKeyDown(e, x)}}
 									key={i}
+									tabIndex={i}
 									className={`dropDown__listItem ${x === selectedValue ? 'active' : ''}`}
 									onClick={(e) => {
-										onItemClick(e, x);
-										setIsOpen(false);
+										handleClick(e, x);
 									}}
 								>
 									{listItemRender(x)}
 								</div>
 							);
-						}) : <p>No currencies found</p> }
+						})
+					) : (
+						<p>No currencies found</p>
+					)}
 				</div>
 			)}
 		</div>
