@@ -1,21 +1,23 @@
 import './App.scss';
-import Combobox from 'react-widgets/Combobox';
-import 'react-widgets/scss/styles.scss';
 import { useState, useEffect } from 'react';
-import {ComboBox as ComboBoxComponent} from './ComboBox'
+import { ComboBox as ComboBoxComponent } from './ComboBox';
 
-const renderListItem = (x) => {
-	let src = x.item.currency.slice(0, 2).toLowerCase();
+const listItemRender = (item) => {
+	let src = item.currency.slice(0, 2).toLowerCase();
+
 	return (
-		<div key={x.item.currency} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+		<div key={item.currency} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
 			<img src={`https://flagcdn.com/${src}.svg`} width="48" height="32" alt=""></img>
-			<p>{x.item.longName}</p>
+			<p>{item.longName}</p>
 		</div>
 	);
 };
 
 function App() {
+	const [inputValue, setInputValue] = useState(null);
+	const [inputValue1, setInputValue1] = useState(null);
 	const [currencies, setCurrencies] = useState([]);
+	const [filteredCurrencies, setFilteredCurrencies] = useState();
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState(null);
 	const [baseCurrency, setBaseCurrency] = useState(null);
@@ -26,6 +28,11 @@ function App() {
 	const [string, setString] = useState('');
 	const [display, setDisplay] = useState(false);
 	const [time, setTime] = useState(null);
+
+	const onDropdownClosed = () => {
+		baseCurrency && setInputValue(baseCurrency.longName);
+		setFilteredCurrencies(currencies);
+	};
 
 	useEffect(() => {
 		const intervalId = setInterval(() => {
@@ -49,6 +56,7 @@ function App() {
 					result.push({ currency, name: data[currency], longName: currency + ' - ' + data[currency] });
 				}
 				setCurrencies(result);
+				setFilteredCurrencies(result);
 				setBaseCurrency(result[49]);
 				setCounterCurrency(result[46]);
 			} catch (e) {
@@ -76,7 +84,7 @@ function App() {
 		if (rates && counterCurrency) {
 			setConversionRate(rates[counterCurrency.currency]);
 			setDisplay(true);
-			setTime(60);
+			setTime(6);
 		}
 	}, [rates]);
 
@@ -95,6 +103,11 @@ function App() {
 		}
 	}, [baseCurrency, conversionRate, counterCurrency, value, display]);
 
+	useEffect(() => {
+		baseCurrency && setInputValue(baseCurrency.longName);
+		counterCurrency && setInputValue1(counterCurrency.longName);
+	}, [baseCurrency, counterCurrency]);
+
 	return (
 		<div className="App">
 			<input
@@ -107,36 +120,49 @@ function App() {
 				}}
 			/>
 			<button onClick={handleSwap}>SWAP</button>
+			<ComboBoxComponent
+				dataSource={filteredCurrencies}
+				listItemRender={listItemRender}
+				onItemClick={(e, item) => {
+					setBaseCurrency(item);
+					setInputValue(item.longName);
+					setDisplay(false);
+					setString(null);
+				}}
+				onInputChange={(e) => {
+					setInputValue(e.target.value);
+					const newData = currencies.filter((x) => x.longName.toLowerCase().includes(e.target.value.toLowerCase()));
+					setFilteredCurrencies(newData);
+				}}
+				inputValue={inputValue}
+				onDropdownClosed={onDropdownClosed}
+				selectedValue={baseCurrency}
+			/>
 
-			<Combobox
-				placeholder="Select Currency..."
-				filter="contains"
-				busy={loading}
-				dataKey={'longName'}
-				data={currencies}
-				renderListItem={renderListItem}
-				textField={'longName'}
-				onChange={(value) => {
-					setBaseCurrency(value);
+			<br></br>
+
+			<ComboBoxComponent
+				dataSource={filteredCurrencies}
+				listItemRender={listItemRender}
+				onItemClick={(x, item) => {
+					setCounterCurrency(item);
+					setInputValue1(item.longName);
 					setDisplay(false);
+					setString(null);
 				}}
-				value={baseCurrency}
-			/>
-			<Combobox
-				placeholder="Select Currency..."
-				filter="contains"
-				busy={loading}
-				dataKey={'longName'}
-				data={currencies}
-				renderListItem={renderListItem}
-				textField={'longName'}
-				onChange={(value) => {
-					setCounterCurrency(value);
-					setDisplay(false);
+				onInputChange={(e) => {
+					setInputValue1(e.target.value);
+					const newData = currencies.filter((x) => x.longName.toLowerCase().includes(e.target.value.toLowerCase()));
+					setFilteredCurrencies(newData);
 				}}
-				value={counterCurrency}
+				inputValue={inputValue1}
+				onDropdownClosed={() => {
+					counterCurrency && setInputValue1(counterCurrency.longName);
+					setFilteredCurrencies(currencies);
+				}}
+				selectedValue={counterCurrency}
 			/>
-			{/* <ComboBoxComponent/> */}
+
 			{display && string && (
 				<p>
 					Expires in: {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, '0')}
