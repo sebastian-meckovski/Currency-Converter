@@ -4,7 +4,13 @@ import 'react-widgets/scss/styles.scss';
 import { useState, useEffect } from 'react';
 
 const renderListItem = (x) => {
-	return <p>{x.item.longName}</p>;
+	let src = x.item.currency.slice(0, 2).toLowerCase();
+	return (
+		<div key={x.item.currency} style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
+			<img src={`https://flagcdn.com/${src}.svg`} width='48' height='32' alt=""></img>
+			<p>{x.item.longName}</p>
+		</div>
+	);
 };
 
 function App() {
@@ -34,8 +40,6 @@ function App() {
 
 	useEffect(() => {
 		const fetchCurrencies = async () => {
-			setLoading(true);
-			setError(null);
 			try {
 				const response = await fetch('https://openexchangerates.org/api/currencies.json');
 				const data = await response.json();
@@ -44,7 +48,7 @@ function App() {
 					result.push({ currency, name: data[currency], longName: currency + ' - ' + data[currency] });
 				}
 				setCurrencies(result);
-				setBaseCurrency(result[49]);
+ 				setBaseCurrency(result[49]);
 				setCounterCurrency(result[46]);
 			} catch (e) {
 				setError(e);
