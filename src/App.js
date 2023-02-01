@@ -6,8 +6,8 @@ import { useState, useEffect } from 'react';
 const renderListItem = (x) => {
 	let src = x.item.currency.slice(0, 2).toLowerCase();
 	return (
-		<div key={x.item.currency} style={{display: 'flex', alignItems: 'center', gap: '10px'}}>
-			<img src={`https://flagcdn.com/${src}.svg`} width='48' height='32' alt=""></img>
+		<div key={x.item.currency} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+			<img src={`https://flagcdn.com/${src}.svg`} width="48" height="32" alt=""></img>
 			<p>{x.item.longName}</p>
 		</div>
 	);
@@ -48,7 +48,7 @@ function App() {
 					result.push({ currency, name: data[currency], longName: currency + ' - ' + data[currency] });
 				}
 				setCurrencies(result);
- 				setBaseCurrency(result[49]);
+				setBaseCurrency(result[49]);
 				setCounterCurrency(result[46]);
 			} catch (e) {
 				setError(e);
@@ -72,12 +72,13 @@ function App() {
 	};
 
 	useEffect(() => {
+    console.log('hello')
 		if (rates && counterCurrency) {
 			setConversionRate(rates[counterCurrency.currency]);
 			setDisplay(true);
-			setTime(6);
+			setTime(60);
 		}
-	}, [rates, counterCurrency]);
+	},[rates]);
 
 	const handleSwap = () => {
 		setDisplay(false);
@@ -105,6 +106,8 @@ function App() {
 					setValue(e.target.value);
 				}}
 			/>
+			<button onClick={handleSwap}>SWAP</button>
+
 			<Combobox
 				placeholder="Select Currency..."
 				filter="contains"
@@ -119,7 +122,6 @@ function App() {
 				}}
 				value={baseCurrency}
 			/>
-			<button onClick={handleSwap}>SWAP</button>
 			<Combobox
 				placeholder="Select Currency..."
 				filter="contains"
@@ -134,7 +136,6 @@ function App() {
 				}}
 				value={counterCurrency}
 			/>
-			<button onClick={fetchConversion}>Convert</button>
 			{display && string && (
 				<p>
 					Expires in: {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, '0')}
@@ -142,6 +143,7 @@ function App() {
 			)}
 			{string && display && <p>{string}</p>}
 			{error && <p>something went wrong...</p>}
+			<button onClick={fetchConversion}>Convert</button>
 		</div>
 	);
 }
