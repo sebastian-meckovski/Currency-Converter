@@ -1,8 +1,10 @@
 import './App.scss';
 import { useState, useEffect } from 'react';
 import { ComboBox as ComboBoxComponent } from './ComboBox';
-import { faExchangeAlt } from '@fortawesome/free-solid-svg-icons';
+import { faExchangeAlt, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import './comboBox.scss';
+
 
 const listItemRender = (item) => {
 	let src = item.currency.slice(0, 2).toLowerCase();
@@ -19,8 +21,8 @@ function App() {
 	const [inputValue, setInputValue] = useState(null);
 	const [inputValue1, setInputValue1] = useState(null);
 	const [currencies, setCurrencies] = useState([]);
-	const [filteredCurrencies, setFilteredCurrencies] = useState();
-	const [loading, setLoading] = useState(true);
+	const [filteredCurrencies, setFilteredCurrencies] = useState(null);
+	const [loading, setLoading] = useState({ loadingDropdown: true, loadingCoversion: false });
 	const [error, setError] = useState(null);
 	const [baseCurrency, setBaseCurrency] = useState(null);
 	const [counterCurrency, setCounterCurrency] = useState(null);
@@ -64,7 +66,9 @@ function App() {
 			} catch (e) {
 				setError(e);
 			} finally {
-				setLoading(false);
+				setLoading((prev) => {
+					return { ...prev, loadingDropdown: false };
+				});
 			}
 		};
 
@@ -74,11 +78,18 @@ function App() {
 	const fetchConversion = async () => {
 		setError(null);
 		try {
+			setLoading((prev) => {
+				return { ...prev, loadingCoversion: true };
+			});
 			const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency.currency}`);
 			const data = await response.json();
 			setRates(data.rates);
 		} catch (e) {
 			setError(e);
+		} finally {
+			setLoading((prev) => {
+				return { ...prev, loadingCoversion: false };
+			});
 		}
 	};
 
@@ -88,7 +99,7 @@ function App() {
 			setDisplay(true);
 			setTime(60);
 		}
-	// eslint-disable-next-line react-hooks/exhaustive-deps
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [rates]);
 
 	const handleSwap = () => {
@@ -148,7 +159,7 @@ function App() {
 				inputValue={inputValue}
 				onDropdownClosed={onDropdownClosed}
 				selectedValue={baseCurrency}
-				isLoading={loading}
+				isLoading={loading.loadingDropdown}
 			/>
 
 			<br></br>
@@ -173,9 +184,10 @@ function App() {
 					setFilteredCurrencies(currencies);
 				}}
 				selectedValue={counterCurrency}
-				isLoading={loading}
+				isLoading={loading.loadingDropdown}
 			/>
-			<div className="conversionMessage">{string && display && <p >{string}</p>}</div>
+			<div className="conversionMessage">{string && display && <p>{string}</p>}</div>
+			{loading.loadingCoversion && <FontAwesomeIcon icon={faSpinner} className="spinner"/>}
 
 			{display && string && (
 				<div className="timer">
