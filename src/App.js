@@ -29,7 +29,6 @@ function App() {
 			setDisplay(false);
 			setString(null);
 		}
-
 		return () => clearInterval(intervalId);
 	}, [time]);
 
@@ -57,33 +56,30 @@ function App() {
 		fetchCurrencies();
 	}, []);
 
-	useEffect(() => {
-		const fetchConversion = async () => {
-			setError(null);
-			try {
-				const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency.currency}`);
-				const data = await response.json();
-				setRates(data.rates);
-			} catch (e) {
-				setError(e);
-				console.log(e);
-			}
-		};
-		baseCurrency && fetchConversion();
-	}, [baseCurrency]);
-
-	const handleSwap = () => {
-		setDisplay(false);
-		setBaseCurrency(counterCurrency);
-		setCounterCurrency(baseCurrency);
+	const fetchConversion = async () => {
+		setError(null);
+		try {
+			const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency.currency}`);
+			const data = await response.json();
+			setRates(data.rates);
+		} catch (e) {
+			setError(e);
+		}
 	};
 
-	const handleConvert = () => {
+	useEffect(() => {
 		if (rates && counterCurrency) {
 			setConversionRate(rates[counterCurrency.currency]);
 			setDisplay(true);
-			setTime(600);
+			setTime(6);
 		}
+	}, [rates, counterCurrency]);
+
+	const handleSwap = () => {
+		setDisplay(false);
+		setRates(null);
+		setBaseCurrency(counterCurrency);
+		setCounterCurrency(baseCurrency);
 	};
 
 	useEffect(() => {
@@ -120,7 +116,6 @@ function App() {
 				value={baseCurrency}
 			/>
 			<button onClick={handleSwap}>SWAP</button>
-
 			<Combobox
 				placeholder="Select Currency..."
 				filter="contains"
@@ -135,14 +130,13 @@ function App() {
 				}}
 				value={counterCurrency}
 			/>
+			<button onClick={fetchConversion}>Convert</button>
 			{display && string && (
 				<p>
-					Expires in: {' '}
-					{Math.floor(time / 60)}:{(time % 60).toString().padStart(2, '0')}
+					Expires in: {Math.floor(time / 60)}:{(time % 60).toString().padStart(2, '0')}
 				</p>
 			)}
 			{string && display && <p>{string}</p>}
-			<button onClick={handleConvert}>Convert</button>
 			{error && <p>something went wrong...</p>}
 		</div>
 	);
