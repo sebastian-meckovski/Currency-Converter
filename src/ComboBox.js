@@ -48,6 +48,7 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 		!isOpen && onDropdownClosed && onDropdownClosed();
 		isOpen && inputRef && inputRef.current.focus();
 		setIndex(-2)
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [isOpen]);
 
 	useEffect(() => {
@@ -97,12 +98,13 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 						}}
 					></input>
 				) : (
+					
 					<div
 						style={{ width: '100%' }}
 						onClick={() => {
 							setIsOpen(true);
 						}}
-					>
+					>hello
 						{selectedValue && listItemRender(selectedValue)}
 					</div>
 				)}

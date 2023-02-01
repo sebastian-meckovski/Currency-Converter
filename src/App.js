@@ -88,6 +88,7 @@ function App() {
 			setDisplay(true);
 			setTime(60);
 		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [rates]);
 
 	const handleSwap = () => {
