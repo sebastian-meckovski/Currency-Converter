@@ -1,10 +1,10 @@
 import './App.scss';
+import './components/comboBox.scss';
 import { useState, useEffect } from 'react';
-import { ComboBox as ComboBoxComponent } from './ComboBox';
+import { ComboBox as ComboBoxComponent } from './components/ComboBox';
 import { faExchangeAlt, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import './comboBox.scss';
-
+import exclusionList from './data/exclusionList';
 
 const listItemRender = (item) => {
 	let src = item.currency.slice(0, 2).toLowerCase();
@@ -57,7 +57,9 @@ function App() {
 				const data = await response.json();
 				let result = [];
 				for (let currency in data) {
-					result.push({ currency, name: data[currency], longName: currency + ' - ' + data[currency] });
+					if (!exclusionList.includes(currency)) {
+						result.push({ currency, name: data[currency], longName: currency + ' - ' + data[currency] });
+					}
 				}
 				setCurrencies(result);
 				setFilteredCurrencies(result);
@@ -187,7 +189,7 @@ function App() {
 				isLoading={loading.loadingDropdown}
 			/>
 			<div className="conversionMessage">{string && display && <p>{string}</p>}</div>
-			{loading.loadingCoversion && <FontAwesomeIcon icon={faSpinner} className="spinner"/>}
+			{loading.loadingCoversion && <FontAwesomeIcon icon={faSpinner} className="spinner" />}
 
 			{display && string && (
 				<div className="timer">
