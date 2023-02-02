@@ -72,6 +72,13 @@ function CurrencyConverter() {
 		}
 	};
 
+	const handleKeyDown = (e) => {
+		console.log('hello')
+		if (e.key === 'Enter') {
+			fetchConversion();
+		}
+	};
+
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			setTime((prevTime) => prevTime - 1);
@@ -128,6 +135,7 @@ function CurrencyConverter() {
 				<p>Amount</p>
 				<div className="Amount">
 					<input
+						onKeyDown={handleKeyDown}
 						className="input"
 						value={amount}
 						onChange={(e) => {

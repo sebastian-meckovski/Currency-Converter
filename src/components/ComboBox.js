@@ -3,13 +3,25 @@ import './comboBox.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown, faAngleUp, faSpinner } from '@fortawesome/free-solid-svg-icons';
 
-export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, onInputChange, onDropdownClosed, selectedValue, isLoading, EmptyResultMessage, placeholder }) {
+export function ComboBox({
+	dataSource,
+	listItemRender,
+	onItemClick,
+	inputValue,
+	onInputChange,
+	onDropdownClosed,
+	selectedValue,
+	isLoading,
+	EmptyResultMessage,
+	placeholder,
+}) {
 	const [isOpen, setIsOpen] = useState(false);
 	const ComboBoxRef = useRef(null);
 	const wrapperRef = useRef(null);
 	const DropdownRef = useRef(null);
 	const inputRef = useRef(null);
 	const [index, setIndex] = useState(-2);
+	const [startTabbing, setStartTabbing] = useState(false);
 
 	function resizeSelectBoxItems() {
 		let selectboxHeader = ComboBoxRef.current;
@@ -45,27 +57,42 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 	});
 
 	useEffect(() => {
-		!isOpen && onDropdownClosed && onDropdownClosed();
-		isOpen && inputRef && inputRef.current.focus();
-		setIndex(-2);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isOpen]);
-
-	useEffect(() => {
 		let listitem;
 		if (DropdownRef.current) {
 			listitem = DropdownRef.current.children[index];
-			listitem.focus();
+			listitem.scrollIntoView({ block: 'center' });
+			if (startTabbing) {
+				listitem.focus();
+			}
 		}
-	}, [index]);
+	}, [index, startTabbing]);
+
+	useEffect(() => {
+		!isOpen && onDropdownClosed && onDropdownClosed();
+		isOpen && inputRef && inputRef.current.focus();
+		isOpen && setStartTabbing(false);
+
+		if (isOpen && selectedValue && dataSource) {
+			const indexOfSelected = dataSource.findIndex((x) => x === selectedValue);
+			setIndex(indexOfSelected);
+		} else {
+			setIndex(-2);
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [isOpen]);
 
 	const onKeyDown = (e, x) => {
 		switch (e.key) {
 			case 'ArrowDown':
-				setIndex((prev) => (dataSource && prev < dataSource.length - 1 ? prev + 1 : prev));
+				setIndex((prev) => {
+					return dataSource && prev < dataSource.length - 1 ? prev + 1 : prev;
+				});
+				setStartTabbing(true);
 				break;
 			case 'ArrowUp':
+				e.preventDefault();
 				setIndex((prev) => (prev > 0 ? prev - 1 : prev));
+				setStartTabbing(true);
 				break;
 			case 'Enter':
 				handleClick(e, x);
@@ -84,7 +111,7 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 
 	return (
 		<div className="comboBoxWrapper" ref={wrapperRef}>
-			<div ref={ComboBoxRef} className={`comboBox ${isOpen ? 'open' : ''}`} onKeyDown={onKeyDown}>
+			<div ref={ComboBoxRef} className={`comboBox ${isOpen ? 'open' : ''}`}>
 				{isOpen ? (
 					<input
 						onKeyDown={onKeyDown}
@@ -94,14 +121,14 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 						className="comboBox__input"
 						placeholder={placeholder}
 						onFocus={(e) => {
-							setIsOpen(true);
+							dataSource && setIsOpen(true);
 						}}
 					></input>
 				) : (
 					<div
 						style={{ width: '100%' }}
 						onClick={() => {
-							setIsOpen(true);
+							dataSource && setIsOpen(true);
 						}}
 					>
 						{selectedValue && listItemRender(selectedValue)}
@@ -122,7 +149,7 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 			</div>
 			{isOpen && (
 				<div ref={DropdownRef} className={`dropDown`}>
-					{dataSource.length > 0 ? (
+					{dataSource && dataSource.length > 0 ? (
 						dataSource.map((x, i) => {
 							return (
 								<div
@@ -141,7 +168,7 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 							);
 						})
 					) : (
-						<p style={{padding: '0.5rem'}}>{EmptyResultMessage}</p>
+						<p style={{ padding: '0.5rem' }}>{EmptyResultMessage}</p>
 					)}
 				</div>
 			)}
