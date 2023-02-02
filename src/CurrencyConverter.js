@@ -8,25 +8,20 @@ import exclusionList from './data/exclusionList';
 import listItemRender from './itemRender';
 
 function CurrencyConverter() {
-	const [inputValue, setInputValue] = useState(null);
-	const [inputValue1, setInputValue1] = useState(null);
+	const [baseCurrencyInputValue, setBaseCurrencyInputValue] = useState(null);
+	const [counterCurrencyInputValue, setCounterCurrencyInputValue] = useState(null);
 	const [filteredCurrencies, setFilteredCurrencies] = useState(null);
-	const [loading, setLoading] = useState({ loadingDropdown: true, loadingCoversion: false });
-	const [error, setError] = useState(null);
 	const [baseCurrency, setBaseCurrency] = useState(null);
 	const [counterCurrency, setCounterCurrency] = useState(null);
 	const [rates, setRates] = useState(null);
 	const [conversionRate, setConversionRate] = useState(null);
-	const [value, setValue] = useState(100);
-	const [string, setString] = useState('');
+	const [baseCurrencyValue, setBaseCurrencyValue] = useState(100);
+	const [conversionString, setConversionString] = useState('');
 	const [display, setDisplay] = useState(false);
+	const [error, setError] = useState(null);
 	const [time, setTime] = useState(null);
+	const [loading, setLoading] = useState({ loadingDropdown: true, loadingCoversion: false });
 	const currencies = useRef(null);
-
-	const onDropdownClosed = () => {
-		baseCurrency && setInputValue(baseCurrency.searchName);
-		setFilteredCurrencies(currencies.current);
-	};
 
 	const fetchConversion = async () => {
 		setError(null);
@@ -53,6 +48,29 @@ function CurrencyConverter() {
 		setCounterCurrency(baseCurrency);
 	};
 
+	const fetchCurrencies = async () => {
+		try {
+			const response = await fetch('https://openexchangerates.org/api/currencies.json');
+			const data = await response.json();
+			let result = [];
+			for (let currency in data) {
+				if (!exclusionList.includes(currency)) {
+					result.push({ currency, name: data[currency], searchName: `${currency} ${data[currency]}` });
+				}
+			}
+			currencies.current = result;
+			setFilteredCurrencies(result);
+			setBaseCurrency(result.find((x) => x.currency === 'GBP') !== undefined ? result.find((x) => x.currency === 'GBP') : result[0]);
+			setCounterCurrency(result.find((x) => x.currency === 'EUR') !== undefined ? result.find((x) => x.currency === 'EUR') : result[1]);
+		} catch (e) {
+			setError(e);
+		} finally {
+			setLoading((prev) => {
+				return { ...prev, loadingDropdown: false };
+			});
+		}
+	};
+
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			setTime((prevTime) => prevTime - 1);
@@ -60,35 +78,12 @@ function CurrencyConverter() {
 
 		if (time === 0) {
 			setDisplay(false);
-			setString(null);
+			setConversionString(null);
 		}
 		return () => clearInterval(intervalId);
 	}, [time]);
 
 	useEffect(() => {
-		const fetchCurrencies = async () => {
-			try {
-				const response = await fetch('https://openexchangerates.org/api/currencies.json');
-				const data = await response.json();
-				let result = [];
-				for (let currency in data) {
-					if (!exclusionList.includes(currency)) {
-						result.push({ currency, name: data[currency], searchName: `${currency} ${data[currency]}` });
-					}
-				}
-				currencies.current = result;
-				setFilteredCurrencies(result);
-				setBaseCurrency(result.find((x) => x.currency === 'GBP') !== undefined ? result.find((x) => x.currency === 'GBP') : result[0]);
-				setCounterCurrency(result.find((x) => x.currency === 'EUR') !== undefined ? result.find((x) => x.currency === 'EUR') : result[1]);
-			} catch (e) {
-				setError(e);
-			} finally {
-				setLoading((prev) => {
-					return { ...prev, loadingDropdown: false };
-				});
-			}
-		};
-
 		fetchCurrencies();
 	}, []);
 
@@ -102,16 +97,20 @@ function CurrencyConverter() {
 	}, [rates]);
 
 	useEffect(() => {
-		if (baseCurrency && conversionRate && counterCurrency && value && display) {
-			setString(`${value}  ${baseCurrency.currency} is equivalent to ${(conversionRate * value).toFixed(0)} ${counterCurrency.currency}`);
+		if (baseCurrency && conversionRate && counterCurrency && baseCurrencyValue && display) {
+			setConversionString(
+				`${baseCurrencyValue}  ${baseCurrency.currency} is equivalent to ${(conversionRate * baseCurrencyValue).toFixed(0)} ${
+					counterCurrency.currency
+				}`
+			);
 		} else {
-			setString(null);
+			setConversionString(null);
 		}
-	}, [baseCurrency, conversionRate, counterCurrency, value, display]);
+	}, [baseCurrency, conversionRate, counterCurrency, baseCurrencyValue, display]);
 
 	useEffect(() => {
-		baseCurrency && setInputValue(baseCurrency.searchName);
-		counterCurrency && setInputValue1(counterCurrency.searchName);
+		baseCurrency && setBaseCurrencyInputValue(baseCurrency.searchName);
+		counterCurrency && setCounterCurrencyInputValue(counterCurrency.searchName);
 	}, [baseCurrency, counterCurrency]);
 
 	return (
@@ -122,11 +121,11 @@ function CurrencyConverter() {
 					<input
 						className="input"
 						type="number"
-						value={value}
+						value={baseCurrencyValue}
 						onChange={(e) => {
 							setDisplay(false);
 							setConversionRate(null);
-							setValue(e.target.value);
+							setBaseCurrencyValue(e.target.value);
 						}}
 					/>
 					<button className="swapButton" onClick={handleSwap}>
@@ -139,17 +138,20 @@ function CurrencyConverter() {
 				listItemRender={listItemRender}
 				onItemClick={(e, item) => {
 					item && setBaseCurrency(item);
-					item && setInputValue(item.searchName);
+					item && setBaseCurrencyInputValue(item.searchName);
 					setDisplay(false);
-					setString(null);
+					setConversionString(null);
 				}}
 				onInputChange={(e) => {
-					setInputValue(e.target.value);
+					setBaseCurrencyInputValue(e.target.value);
 					const newData = currencies.current.filter((x) => x.searchName.toLowerCase().includes(e.target.value.toLowerCase()));
 					setFilteredCurrencies(newData);
 				}}
-				inputValue={inputValue}
-				onDropdownClosed={onDropdownClosed}
+				inputValue={baseCurrencyInputValue}
+				onDropdownClosed={() => {
+					baseCurrency && setBaseCurrencyInputValue(baseCurrency.searchName);
+					setFilteredCurrencies(currencies.current);
+				}}
 				selectedValue={baseCurrency}
 				isLoading={loading.loadingDropdown}
 				EmptyResultMessage={'No Currencies Found'}
@@ -160,18 +162,18 @@ function CurrencyConverter() {
 				listItemRender={listItemRender}
 				onItemClick={(x, item) => {
 					item && setCounterCurrency(item);
-					item && setInputValue1(item.searchName);
+					item && setCounterCurrencyInputValue(item.searchName);
 					setDisplay(false);
-					setString(null);
+					setConversionString(null);
 				}}
 				onInputChange={(e) => {
-					setInputValue1(e.target.value);
+					setCounterCurrencyInputValue(e.target.value);
 					const newData = currencies.current.filter((x) => x.searchName.toLowerCase().includes(e.target.value.toLowerCase()));
 					setFilteredCurrencies(newData);
 				}}
-				inputValue={inputValue1}
+				inputValue={counterCurrencyInputValue}
 				onDropdownClosed={() => {
-					counterCurrency && setInputValue1(counterCurrency.searchName);
+					counterCurrency && setCounterCurrencyInputValue(counterCurrency.searchName);
 					setFilteredCurrencies(currencies.current);
 				}}
 				selectedValue={counterCurrency}
@@ -179,9 +181,9 @@ function CurrencyConverter() {
 				EmptyResultMessage={'No Currencies Found'}
 				placeholder={'Enter currency...'}
 			/>
-			<div className="conversionMessage">{string && display && <p>{string}</p>}</div>
+			<div className="conversionMessage">{conversionString && display && <p>{conversionString}</p>}</div>
 			{loading.loadingCoversion && <FontAwesomeIcon icon={faSpinner} className="spinner" />}
-			{display && string && (
+			{display && conversionString && (
 				<div className="timer">
 					<p>Expires in:</p>
 					<p>{Math.floor(time / 60)}'</p>
