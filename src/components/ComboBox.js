@@ -62,7 +62,7 @@ export function ComboBox({
 			listitem = DropdownRef.current.children[index];
 			listitem && listitem.scrollIntoView({ block: 'center' });
 			if (startTabbing) {
-				listitem ? listitem.focus() : setIndex(0)
+				listitem ? listitem.focus() : setIndex(0);
 			}
 		}
 	}, [index, startTabbing]);
@@ -111,14 +111,14 @@ export function ComboBox({
 
 	return (
 		<div className="comboBoxWrapper" ref={wrapperRef}>
-			<div ref={ComboBoxRef} className={`comboBox ${isOpen ? 'open' : ''}`}>
+			<div ref={ComboBoxRef} className={`comboBoxWrapper__comboBox ${isOpen ? 'open' : ''}`}>
 				{isOpen ? (
 					<input
 						onKeyDown={onKeyDown}
 						ref={inputRef}
 						onChange={onInputChange}
 						value={inputValue ? inputValue : ''}
-						className="comboBox__input"
+						className="comboBoxWrapper__comboBox__input"
 						placeholder={placeholder}
 						onFocus={(e) => {
 							dataSource && setIsOpen(true);
@@ -135,7 +135,7 @@ export function ComboBox({
 					</div>
 				)}
 				<button
-					className="comboButton"
+					className="comboBoxWrapper__comboBox__comboButton"
 					onClick={() => {
 						setIsOpen((prev) => !prev);
 					}}
@@ -143,12 +143,12 @@ export function ComboBox({
 					{!isLoading ? (
 						<FontAwesomeIcon icon={isOpen ? faAngleUp : faAngleDown} />
 					) : (
-						<FontAwesomeIcon className="spinner" icon={faSpinner} />
+						<FontAwesomeIcon className="comboBoxWrapper__comboBox__comboButton__spinner" icon={faSpinner} />
 					)}
 				</button>
 			</div>
 			{isOpen && (
-				<div ref={DropdownRef} className={`dropDown`}>
+				<div ref={DropdownRef} className={'comboBoxWrapper__dropDown'}>
 					{dataSource && dataSource.length > 0 ? (
 						dataSource.map((x, i) => {
 							return (

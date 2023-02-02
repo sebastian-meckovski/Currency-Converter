@@ -1,4 +1,4 @@
-.App {
+.currencyConverter {
 	--appColor: #32589e;
 	text-align: center;
 	width: 50vw;
@@ -8,7 +8,6 @@
 	* {
 		color: var(--appColor);
 	}
-
 	@media (max-width: 600px) {
 		width: 90%;
 	}
@@ -16,71 +15,79 @@
 	p {
 		margin: 0;
 	}
-}
-
-.inputWrapper {
-	text-align: left;
-	p {
-		color: gray;
-		font-size: 10px;
+	&__inputWrapper {
+		text-align: left;
+		p {
+			color: gray;
+			font-size: 10px;
+		}
+		&__amount {
+			border-bottom: 1px solid;
+			display: flex;
+			justify-content: space-between;
+			padding: 0.25rem 0;
+			&__input {
+				font-weight: 700;
+				font-size: 16px;
+				border: none;
+				color: var(--appColor);
+				height: 1rem;
+				width: 100%;
+				&:focus-visible {
+					outline: none;
+				}
+			}
+			&__swapButton {
+				border: none;
+				background-color: transparent;
+				cursor: pointer;
+				color: var(--appColor);
+			}
+		}
 	}
-}
+	&__conversionMessage {
+		margin: 1rem;
+		font-weight: 700;
+		font-size: 16px;
+	}
+	&__spinner {
+		animation-name: spin;
+		animation-duration: 1500ms;
+		animation-iteration-count: infinite;
+		animation-timing-function: linear;
+	}
 
-.timer {
-	border: 2px solid;
-	width: 10rem;
-	margin: 0.5rem auto 0.5rem auto;
-	background-color: var(--appColor);
-	height: 2rem;
-	display: flex;
-	align-items: center;
-	border: 3px solid #859bc5;
-
-	p {
-		margin: auto;
+	&__timer {
+		border: 2px solid;
+		width: 10rem;
+		margin: 0.5rem auto 0.5rem auto;
+		background-color: var(--appColor);
+		height: 2rem;
+		display: flex;
+		align-items: center;
+		border: 3px solid #859bc5;
+		p {
+			margin: auto;
+			color: white;
+		}
+	}
+	&__convertButton {
+		width: 100%;
+		border: none;
+		background-color: var(--appColor);
 		color: white;
+		border-radius: 1rem;
+		height: 2rem;
+		margin: 0.75rem 0;
+		cursor: pointer;
 	}
 }
 
-.Amount {
-	border-bottom: 1px solid;
-	display: flex;
-	justify-content: space-between;
-	padding: 0.25rem 0;
-}
-
-.input {
-	font-weight: 700;
-	font-size: 16px;
-	border: none;
-	color: var(--appColor);
-	height: 1rem;
-	width: 100%;
-	&:focus-visible {
-		outline: none;
+@keyframes spin {
+	from {
+		transform: rotate(0deg);
 	}
-}
-
-.swapButton {
-	border: none;
-	background-color: transparent;
-	cursor: pointer;
-	color: var(--appColor);
-}
-
-.convertButton {
-	width: 100%;
-	border: none;
-	background-color: var(--appColor);
-	color: white;
-	border-radius: 1rem;
-	height: 2rem;
-	margin: 0.75rem 0;
-	cursor: pointer;
-}
-
-.conversionMessage {
-	margin: 1rem;
-	font-weight: 700;
-	font-size: 16px;
+	to {
+		transform: rotate(360deg);
+	}
 }

@@ -1,5 +1,4 @@
 import './CurrencyConverter.scss';
-import './components/comboBox.scss';
 import { useState, useEffect, useRef } from 'react';
 import { ComboBox as ComboBoxComponent } from './components/ComboBox';
 import { faExchangeAlt, faSpinner } from '@fortawesome/free-solid-svg-icons';
@@ -129,13 +128,13 @@ function CurrencyConverter() {
 	}, [amount]);
 
 	return (
-		<div className="App">
-			<div className="inputWrapper">
+		<div className="currencyConverter">
+			<div className="currencyConverter__inputWrapper">
 				<p>Amount</p>
-				<div className="Amount">
+				<div className="currencyConverter__inputWrapper__amount">
 					<input
 						onKeyDown={handleKeyDown}
-						className="input"
+						className="currencyConverter__inputWrapper__amount__input"
 						value={amount}
 						onChange={(e) => {
 							setDisplay(false);
@@ -143,7 +142,7 @@ function CurrencyConverter() {
 							setAmount(e.target.value);
 						}}
 					/>
-					<button className="swapButton" onClick={handleSwap}>
+					<button className="currencyConverter__inputWrapper__amount__swapButton" onClick={handleSwap}>
 						<FontAwesomeIcon icon={faExchangeAlt} />{' '}
 					</button>
 				</div>
@@ -196,23 +195,23 @@ function CurrencyConverter() {
 				EmptyResultMessage={'No Currencies Found'}
 				placeholder={'Enter currency...'}
 			/>
-			<div data-testid="test-convert" className="conversionMessage">
+			<div data-testid="test-convert" className="currencyConverter__conversionMessage">
 				{conversionString && display && !validationMessage && <p>{conversionString}</p>}
 			</div>
-			{loading.loadingCoversion && <FontAwesomeIcon icon={faSpinner} className="spinner" />}
+			{loading.loadingCoversion && <FontAwesomeIcon icon={faSpinner} className="currencyConverter__spinner" />}
 			{display && conversionString && !validationMessage && (
-				<div className="timer">
+				<div className="currencyConverter__timer">
 					<p>Expires in:</p>
 					<p>{Math.floor(time / 60)}'</p>
 					<p>{(time % 60).toString().padStart(2, '0')}''</p>
 				</div>
 			)}
 			{validationMessage && display && (
-				<div className="conversionMessage">
+				<div className="currencyConverter__conversionMessage">
 					<p style={{ color: 'red' }}>{validationMessage}</p>
 				</div>
 			)}
-			<button className="convertButton" onClick={fetchConversion}>
+			<button className="currencyConverter__convertButton" onClick={fetchConversion}>
 				Convert
 			</button>
 			{error && <p>something went wrong...</p>}
