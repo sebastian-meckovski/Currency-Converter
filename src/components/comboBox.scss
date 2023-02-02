@@ -33,6 +33,9 @@
 		}
 	}
 	&__dropDown {
+		list-style-type: none;
+		margin: 0;
+		padding: 0;
 		border: 1px solid;
 		border-top: none;
 		max-height: 15rem;

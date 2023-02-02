@@ -142,7 +142,7 @@ function CurrencyConverter() {
 							setAmount(e.target.value);
 						}}
 					/>
-					<button className="currencyConverter__inputWrapper__amount__swapButton" onClick={handleSwap}>
+					<button className="currencyConverter__inputWrapper__amount__swapButton" aria-label="swap" onClick={handleSwap}>
 						<FontAwesomeIcon icon={faExchangeAlt} />{' '}
 					</button>
 				</div>
@@ -170,6 +170,8 @@ function CurrencyConverter() {
 				isLoading={loading.loadingDropdown}
 				EmptyResultMessage={'No Currencies Found'}
 				placeholder={'Enter currency...'}
+				ariaKey={'name'}
+				buttonDropDownAriaKey={'name'}	
 			/>
 			<ComboBoxComponent
 				dataSource={filteredCurrencies}
@@ -194,8 +196,10 @@ function CurrencyConverter() {
 				isLoading={loading.loadingDropdown}
 				EmptyResultMessage={'No Currencies Found'}
 				placeholder={'Enter currency...'}
+				ariaKey={'name'}
+				buttonDropDownAriaKey={'name'}
 			/>
-			<div data-testid="test-convert" className="currencyConverter__conversionMessage">
+			<div data-testid="test-convert" className="currencyConverter__conversionMessage" aria-live='polite'>
 				{conversionString && display && !validationMessage && <p>{conversionString}</p>}
 			</div>
 			{loading.loadingCoversion && <FontAwesomeIcon icon={faSpinner} className="currencyConverter__spinner" />}
@@ -208,10 +212,14 @@ function CurrencyConverter() {
 			)}
 			{validationMessage && display && (
 				<div className="currencyConverter__conversionMessage">
-					<p style={{ color: 'red' }}>{validationMessage}</p>
+					<p aria-live='polite' style={{ color: 'red' }} >{validationMessage}</p>
 				</div>
 			)}
-			<button className="currencyConverter__convertButton" onClick={fetchConversion}>
+			<button
+				className="currencyConverter__convertButton"
+				onClick={fetchConversion}
+				aria-label={baseCurrency && counterCurrency ? `Convert ${baseCurrency.name} to ${counterCurrency.name}` : null}
+			>
 				Convert
 			</button>
 			{error && <p>something went wrong...</p>}

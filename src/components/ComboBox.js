@@ -14,6 +14,8 @@ export function ComboBox({
 	isLoading,
 	EmptyResultMessage,
 	placeholder,
+	ariaKey,
+	buttonDropDownAriaKey
 }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const ComboBoxRef = useRef(null);
@@ -116,6 +118,7 @@ export function ComboBox({
 					<input
 						onKeyDown={onKeyDown}
 						ref={inputRef}
+						aria-label='type search value or press arrow down to select value from the dropdown'
 						onChange={onInputChange}
 						value={inputValue ? inputValue : ''}
 						className="comboBoxWrapper__comboBox__input"
@@ -135,6 +138,7 @@ export function ComboBox({
 					</div>
 				)}
 				<button
+					aria-label={buttonDropDownAriaKey && selectedValue ? `current selection ${selectedValue[buttonDropDownAriaKey]}, open dropdown to select other value` : null}
 					className="comboBoxWrapper__comboBox__comboButton"
 					onClick={() => {
 						setIsOpen((prev) => !prev);
@@ -148,11 +152,11 @@ export function ComboBox({
 				</button>
 			</div>
 			{isOpen && (
-				<div ref={DropdownRef} className={'comboBoxWrapper__dropDown'}>
+				<ul ref={DropdownRef} className={'comboBoxWrapper__dropDown'}>
 					{dataSource && dataSource.length > 0 ? (
 						dataSource.map((x, i) => {
 							return (
-								<div
+								<li
 									onKeyDown={(e) => {
 										onKeyDown(e, x);
 									}}
@@ -162,15 +166,16 @@ export function ComboBox({
 									onClick={(e) => {
 										handleClick(e, x);
 									}}
+									aria-label={ariaKey ? x[ariaKey]  : null}
 								>
 									{listItemRender(x)}
-								</div>
+								</li>
 							);
 						})
 					) : (
 						<p style={{ padding: '0.5rem' }}>{EmptyResultMessage}</p>
 					)}
-				</div>
+				</ul>
 			)}
 		</div>
 	);
