@@ -20,7 +20,7 @@ function CurrencyConverter() {
 	const [string, setString] = useState('');
 	const [display, setDisplay] = useState(false);
 	const [time, setTime] = useState(null);
-	const currencies = useRef(null)
+	const currencies = useRef(null);
 
 	const onDropdownClosed = () => {
 		baseCurrency && setInputValue(baseCurrency.longName);
@@ -62,8 +62,8 @@ function CurrencyConverter() {
 				}
 				currencies.current = result;
 				setFilteredCurrencies(result);
-				setBaseCurrency(result.find(x => x.currency === 'GBP') !== undefined ? result.find(x => x.currency === 'GBP') : result[0]);
-				setCounterCurrency(result.find(x => x.currency === 'EUR') !== undefined ? result.find(x => x.currency === 'EUR') : result[1]);
+				setBaseCurrency(result.find((x) => x.currency === 'GBP') !== undefined ? result.find((x) => x.currency === 'GBP') : result[0]);
+				setCounterCurrency(result.find((x) => x.currency === 'EUR') !== undefined ? result.find((x) => x.currency === 'EUR') : result[1]);
 			} catch (e) {
 				setError(e);
 			} finally {
@@ -98,7 +98,7 @@ function CurrencyConverter() {
 		if (rates && counterCurrency) {
 			setConversionRate(rates[counterCurrency.currency]);
 			setDisplay(true);
-			setTime(60);
+			setTime(600);
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [rates]);
@@ -162,7 +162,6 @@ function CurrencyConverter() {
 				selectedValue={baseCurrency}
 				isLoading={loading.loadingDropdown}
 			/>
-
 			<ComboBoxComponent
 				dataSource={filteredCurrencies}
 				listItemRender={listItemRender}
@@ -187,11 +186,9 @@ function CurrencyConverter() {
 			/>
 			<div className="conversionMessage">{string && display && <p>{string}</p>}</div>
 			{loading.loadingCoversion && <FontAwesomeIcon icon={faSpinner} className="spinner" />}
-
 			{display && string && (
 				<div className="timer">
 					<p>Expires in:</p>
-
 					<p>{Math.floor(time / 60)}'</p>
 					<p>{(time % 60).toString().padStart(2, '0')}''</p>
 				</div>
