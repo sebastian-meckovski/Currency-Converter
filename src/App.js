@@ -164,8 +164,6 @@ function App() {
 				isLoading={loading.loadingDropdown}
 			/>
 
-			<br></br>
-
 			<ComboBoxComponent
 				dataSource={filteredCurrencies}
 				listItemRender={listItemRender}
