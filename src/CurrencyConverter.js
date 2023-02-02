@@ -28,6 +28,31 @@ function CurrencyConverter() {
 		setFilteredCurrencies(currencies.current);
 	};
 
+	const fetchConversion = async () => {
+		setError(null);
+		try {
+			setLoading((prev) => {
+				return { ...prev, loadingCoversion: true };
+			});
+			const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency.currency}`);
+			const data = await response.json();
+			setRates(data.rates);
+		} catch (e) {
+			setError(e);
+		} finally {
+			setLoading((prev) => {
+				return { ...prev, loadingCoversion: false };
+			});
+		}
+	};
+
+	const handleSwap = () => {
+		setDisplay(false);
+		setRates(null);
+		setBaseCurrency(counterCurrency);
+		setCounterCurrency(baseCurrency);
+	};
+
 	useEffect(() => {
 		const intervalId = setInterval(() => {
 			setTime((prevTime) => prevTime - 1);
@@ -67,24 +92,6 @@ function CurrencyConverter() {
 		fetchCurrencies();
 	}, []);
 
-	const fetchConversion = async () => {
-		setError(null);
-		try {
-			setLoading((prev) => {
-				return { ...prev, loadingCoversion: true };
-			});
-			const response = await fetch(`https://api.exchangerate-api.com/v4/latest/${baseCurrency.currency}`);
-			const data = await response.json();
-			setRates(data.rates);
-		} catch (e) {
-			setError(e);
-		} finally {
-			setLoading((prev) => {
-				return { ...prev, loadingCoversion: false };
-			});
-		}
-	};
-
 	useEffect(() => {
 		if (rates && counterCurrency) {
 			setConversionRate(rates[counterCurrency.currency]);
@@ -93,13 +100,6 @@ function CurrencyConverter() {
 		}
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [rates]);
-
-	const handleSwap = () => {
-		setDisplay(false);
-		setRates(null);
-		setBaseCurrency(counterCurrency);
-		setCounterCurrency(baseCurrency);
-	};
 
 	useEffect(() => {
 		if (baseCurrency && conversionRate && counterCurrency && value && display) {
