@@ -60,9 +60,9 @@ export function ComboBox({
 		let listitem;
 		if (DropdownRef.current) {
 			listitem = DropdownRef.current.children[index];
-			listitem.scrollIntoView({ block: 'center' });
+			listitem && listitem.scrollIntoView({ block: 'center' });
 			if (startTabbing) {
-				listitem.focus();
+				listitem ? listitem.focus() : setIndex(0)
 			}
 		}
 	}, [index, startTabbing]);

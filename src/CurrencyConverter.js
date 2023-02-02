@@ -73,7 +73,6 @@ function CurrencyConverter() {
 	};
 
 	const handleKeyDown = (e) => {
-		console.log('hello')
 		if (e.key === 'Enter') {
 			fetchConversion();
 		}
