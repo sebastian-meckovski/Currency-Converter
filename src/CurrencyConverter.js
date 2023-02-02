@@ -5,7 +5,7 @@ import { ComboBox as ComboBoxComponent } from './components/ComboBox';
 import { faExchangeAlt, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import exclusionList from './data/exclusionList';
-import listItemRender from './itemRender';
+import { listItemRender, calculateRate } from './utils';
 
 function CurrencyConverter() {
 	const [baseCurrencyInputValue, setBaseCurrencyInputValue] = useState(null);
@@ -99,7 +99,7 @@ function CurrencyConverter() {
 	useEffect(() => {
 		if (baseCurrency && conversionRate && counterCurrency && baseCurrencyValue && display) {
 			setConversionString(
-				`${baseCurrencyValue}  ${baseCurrency.currency} is equivalent to ${(conversionRate * baseCurrencyValue).toFixed(0)} ${
+				`${baseCurrencyValue}  ${baseCurrency.currency} is equivalent to ${calculateRate(conversionRate, baseCurrencyValue)} ${
 					counterCurrency.currency
 				}`
 			);
@@ -181,7 +181,7 @@ function CurrencyConverter() {
 				EmptyResultMessage={'No Currencies Found'}
 				placeholder={'Enter currency...'}
 			/>
-			<div className="conversionMessage">{conversionString && display && <p>{conversionString}</p>}</div>
+			<div data-testid='test-convert' className="conversionMessage">{conversionString && display && <p>{conversionString}</p>}</div>
 			{loading.loadingCoversion && <FontAwesomeIcon icon={faSpinner} className="spinner" />}
 			{display && conversionString && (
 				<div className="timer">

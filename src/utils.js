@@ -1,4 +1,4 @@
-const listItemRender = (item) => {
+export const listItemRender = (item) => {
 	let style = { textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', fontSize: '11px', marginTop: '2px' };
 	let src = item.currency.slice(0, 2).toLowerCase();
 	return (
@@ -10,4 +10,6 @@ const listItemRender = (item) => {
 	);
 };
 
-export default listItemRender;
+export const calculateRate = (x, y) => {
+	return (x * y).toFixed(0);
+};
