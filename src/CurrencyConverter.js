@@ -1,26 +1,14 @@
-import './App.scss';
+import './CurrencyConverter.scss';
 import './components/comboBox.scss';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { ComboBox as ComboBoxComponent } from './components/ComboBox';
 import { faExchangeAlt, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import exclusionList from './data/exclusionList';
 
-const listItemRender = (item) => {
-	let src = item.currency.slice(0, 2).toLowerCase();
-
-	return (
-		<div key={item.currency} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', margin: '0.75rem 0.25rem' }}>
-			<img src={`https://flagcdn.com/${src}.svg`} width="48" height="32" alt=""></img>
-			<p>{item.longName}</p>
-		</div>
-	);
-};
-
-function App() {
+function CurrencyConverter() {
 	const [inputValue, setInputValue] = useState(null);
 	const [inputValue1, setInputValue1] = useState(null);
-	const [currencies, setCurrencies] = useState([]);
 	const [filteredCurrencies, setFilteredCurrencies] = useState(null);
 	const [loading, setLoading] = useState({ loadingDropdown: true, loadingCoversion: false });
 	const [error, setError] = useState(null);
@@ -32,10 +20,21 @@ function App() {
 	const [string, setString] = useState('');
 	const [display, setDisplay] = useState(false);
 	const [time, setTime] = useState(null);
+	const currencies = useRef(null)
 
 	const onDropdownClosed = () => {
 		baseCurrency && setInputValue(baseCurrency.longName);
-		setFilteredCurrencies(currencies);
+		setFilteredCurrencies(currencies.current);
+	};
+
+	const listItemRender = (item) => {
+		let src = item.currency.slice(0, 2).toLowerCase();
+		return (
+			<div key={item.currency} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', margin: '0.75rem 0.25rem' }}>
+				<img src={`https://flagcdn.com/${src}.svg`} width="48" height="32" alt=""></img>
+				<p>{item.longName}</p>
+			</div>
+		);
 	};
 
 	useEffect(() => {
@@ -61,10 +60,10 @@ function App() {
 						result.push({ currency, name: data[currency], longName: currency + ' - ' + data[currency] });
 					}
 				}
-				setCurrencies(result);
+				currencies.current = result;
 				setFilteredCurrencies(result);
-				setBaseCurrency(result[49]);
-				setCounterCurrency(result[46]);
+				setBaseCurrency(result.find(x => x.currency === 'GBP') !== undefined ? result.find(x => x.currency === 'GBP') : result[0]);
+				setCounterCurrency(result.find(x => x.currency === 'EUR') !== undefined ? result.find(x => x.currency === 'EUR') : result[1]);
 			} catch (e) {
 				setError(e);
 			} finally {
@@ -155,7 +154,7 @@ function App() {
 				}}
 				onInputChange={(e) => {
 					setInputValue(e.target.value);
-					const newData = currencies.filter((x) => x.longName.toLowerCase().includes(e.target.value.toLowerCase()));
+					const newData = currencies.current.filter((x) => x.longName.toLowerCase().includes(e.target.value.toLowerCase()));
 					setFilteredCurrencies(newData);
 				}}
 				inputValue={inputValue}
@@ -175,13 +174,13 @@ function App() {
 				}}
 				onInputChange={(e) => {
 					setInputValue1(e.target.value);
-					const newData = currencies.filter((x) => x.longName.toLowerCase().includes(e.target.value.toLowerCase()));
+					const newData = currencies.current.filter((x) => x.longName.toLowerCase().includes(e.target.value.toLowerCase()));
 					setFilteredCurrencies(newData);
 				}}
 				inputValue={inputValue1}
 				onDropdownClosed={() => {
 					counterCurrency && setInputValue1(counterCurrency.longName);
-					setFilteredCurrencies(currencies);
+					setFilteredCurrencies(currencies.current);
 				}}
 				selectedValue={counterCurrency}
 				isLoading={loading.loadingDropdown}
@@ -205,4 +204,4 @@ function App() {
 	);
 }
 
-export default App;
+export default CurrencyConverter;
