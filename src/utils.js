@@ -11,5 +11,24 @@ export const listItemRender = (item) => {
 };
 
 export const calculateRate = (x, y) => {
-	return (x * y).toFixed(0);
+	if (isValidNumber(y) && isValidNumber(x)) {
+		let result = x * y;
+		let number = decimalPlaces(parseFloat(result.toFixed(2)));
+		let formattedResult = result.toFixed(number);
+		return formattedResult;
+	}
 };
+
+export const isValidNumber = (str) => {
+	if (!str) return false;
+	const pattern = /^\d+(\.\d+)?$/;
+	return pattern.test(str);
+};
+
+function decimalPlaces(num) {
+	if (typeof num !== 'number') return false;
+	const parts = num.toString().split('.');
+	if (parts.length === 1) return 0;
+	if (parts[1] === '00') return 0;
+	return parts[1].length;
+}

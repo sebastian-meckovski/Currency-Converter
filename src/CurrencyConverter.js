@@ -5,7 +5,7 @@ import { ComboBox as ComboBoxComponent } from './components/ComboBox';
 import { faExchangeAlt, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import exclusionList from './data/exclusionList';
-import { listItemRender, calculateRate } from './utils';
+import { listItemRender, calculateRate, isValidNumber } from './utils';
 
 function CurrencyConverter() {
 	const [baseCurrencyInputValue, setBaseCurrencyInputValue] = useState(null);
@@ -15,12 +15,13 @@ function CurrencyConverter() {
 	const [counterCurrency, setCounterCurrency] = useState(null);
 	const [rates, setRates] = useState(null);
 	const [conversionRate, setConversionRate] = useState(null);
-	const [baseCurrencyValue, setBaseCurrencyValue] = useState(100);
+	const [amount, setAmount] = useState('100');
 	const [conversionString, setConversionString] = useState('');
 	const [display, setDisplay] = useState(false);
 	const [error, setError] = useState(null);
 	const [time, setTime] = useState(null);
 	const [loading, setLoading] = useState({ loadingDropdown: true, loadingCoversion: false });
+	const [validationMessage, setValidationMessage] = useState(null);
 	const currencies = useRef(null);
 
 	const fetchConversion = async () => {
@@ -97,21 +98,29 @@ function CurrencyConverter() {
 	}, [rates]);
 
 	useEffect(() => {
-		if (baseCurrency && conversionRate && counterCurrency && baseCurrencyValue && display) {
+		if (baseCurrency && conversionRate && counterCurrency && amount && display) {
 			setConversionString(
-				`${baseCurrencyValue}  ${baseCurrency.currency} is equivalent to ${calculateRate(conversionRate, baseCurrencyValue)} ${
-					counterCurrency.currency
-				}`
+				`${amount}  ${baseCurrency.currency} is equivalent to ${calculateRate(conversionRate, amount)} ${counterCurrency.currency}`
 			);
 		} else {
 			setConversionString(null);
 		}
-	}, [baseCurrency, conversionRate, counterCurrency, baseCurrencyValue, display]);
+	}, [baseCurrency, conversionRate, counterCurrency, amount, display]);
 
 	useEffect(() => {
 		baseCurrency && setBaseCurrencyInputValue(baseCurrency.searchName);
 		counterCurrency && setCounterCurrencyInputValue(counterCurrency.searchName);
 	}, [baseCurrency, counterCurrency]);
+
+	useEffect(() => {
+		if (isValidNumber(amount)) {
+			setValidationMessage(null);
+		} else if (amount === '') {
+			setValidationMessage('Please enter a value');
+		} else {
+			setValidationMessage(`${amount} is not a valid nubmer`);
+		}
+	}, [amount]);
 
 	return (
 		<div className="App">
@@ -120,12 +129,11 @@ function CurrencyConverter() {
 				<div className="Amount">
 					<input
 						className="input"
-						type="number"
-						value={baseCurrencyValue}
+						value={amount}
 						onChange={(e) => {
 							setDisplay(false);
 							setConversionRate(null);
-							setBaseCurrencyValue(e.target.value);
+							setAmount(e.target.value);
 						}}
 					/>
 					<button className="swapButton" onClick={handleSwap}>
@@ -181,13 +189,20 @@ function CurrencyConverter() {
 				EmptyResultMessage={'No Currencies Found'}
 				placeholder={'Enter currency...'}
 			/>
-			<div data-testid='test-convert' className="conversionMessage">{conversionString && display && <p>{conversionString}</p>}</div>
+			<div data-testid="test-convert" className="conversionMessage">
+				{conversionString && display && !validationMessage && <p>{conversionString}</p>}
+			</div>
 			{loading.loadingCoversion && <FontAwesomeIcon icon={faSpinner} className="spinner" />}
-			{display && conversionString && (
+			{display && conversionString && !validationMessage && (
 				<div className="timer">
 					<p>Expires in:</p>
 					<p>{Math.floor(time / 60)}'</p>
 					<p>{(time % 60).toString().padStart(2, '0')}''</p>
+				</div>
+			)}
+			{validationMessage && display && (
+				<div className="conversionMessage">
+					<p style={{ color: 'red' }}>{validationMessage}</p>
 				</div>
 			)}
 			<button className="convertButton" onClick={fetchConversion}>
