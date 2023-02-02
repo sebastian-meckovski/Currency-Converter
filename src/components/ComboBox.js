@@ -3,7 +3,7 @@ import './comboBox.scss';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown, faAngleUp, faSpinner } from '@fortawesome/free-solid-svg-icons';
 
-export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, onInputChange, onDropdownClosed, selectedValue, isLoading }) {
+export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, onInputChange, onDropdownClosed, selectedValue, isLoading, EmptyResultMessage, placeholder }) {
 	const [isOpen, setIsOpen] = useState(false);
 	const ComboBoxRef = useRef(null);
 	const wrapperRef = useRef(null);
@@ -92,7 +92,7 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 						onChange={onInputChange}
 						value={inputValue ? inputValue : ''}
 						className="comboBox__input"
-						placeholder="Enter currency..."
+						placeholder={placeholder}
 						onFocus={(e) => {
 							setIsOpen(true);
 						}}
@@ -141,7 +141,7 @@ export function ComboBox({ dataSource, listItemRender, onItemClick, inputValue, 
 							);
 						})
 					) : (
-						<p>No currencies found</p>
+						<p style={{padding: '0.5rem'}}>{EmptyResultMessage}</p>
 					)}
 				</div>
 			)}
