@@ -25,6 +25,7 @@
 	border: none;
 	background-color: transparent;
 	margin-left: auto;
+	cursor: pointer;
 }
 
 .dropDown {
@@ -35,6 +36,7 @@
 	position: absolute;
 	width: 25rem;
 	overflow: auto;
+	overflow-x: hidden;
 	text-align: left;
 	background-color: white;
 	cursor: pointer;
@@ -42,6 +44,7 @@
 	flex-direction: column;
 	&__listItem {
 		display: flex;
+		padding: 2px;
 		align-items: center;
 		&:hover {
 			background-color: gray;

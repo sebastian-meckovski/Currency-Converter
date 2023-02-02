@@ -23,16 +23,18 @@ function CurrencyConverter() {
 	const currencies = useRef(null);
 
 	const onDropdownClosed = () => {
-		baseCurrency && setInputValue(baseCurrency.longName);
+		baseCurrency && setInputValue(baseCurrency.searchName);
 		setFilteredCurrencies(currencies.current);
 	};
 
 	const listItemRender = (item) => {
+		let style = { textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden', fontSize:'11px', marginTop: '2px' };
 		let src = item.currency.slice(0, 2).toLowerCase();
 		return (
-			<div key={item.currency} style={{ display: 'flex', alignItems: 'center', gap: '10px', width: '100%', margin: '0.75rem 0.25rem' }}>
-				<img src={`https://flagcdn.com/${src}.svg`} width="48" height="32" alt=""></img>
-				<p>{item.longName}</p>
+			<div key={item.currency} style={{ display: 'flex', alignItems: 'center', width: '100%', margin: '0.75rem 0.25rem' }}>
+				<img src={`https://flagcdn.com/${src}.svg`} width="48" height="32" alt="" style={{ margin: '0 0.5rem' }}></img>
+				<p>{item.currency}/</p>
+				<p style={style}>{item.name}</p>
 			</div>
 		);
 	};
@@ -57,7 +59,7 @@ function CurrencyConverter() {
 				let result = [];
 				for (let currency in data) {
 					if (!exclusionList.includes(currency)) {
-						result.push({ currency, name: data[currency], longName: currency + ' - ' + data[currency] });
+						result.push({ currency, name: data[currency], searchName: `${currency} ${data[currency]}` });
 					}
 				}
 				currencies.current = result;
@@ -119,8 +121,8 @@ function CurrencyConverter() {
 	}, [baseCurrency, conversionRate, counterCurrency, value, display]);
 
 	useEffect(() => {
-		baseCurrency && setInputValue(baseCurrency.longName);
-		counterCurrency && setInputValue1(counterCurrency.longName);
+		baseCurrency && setInputValue(baseCurrency.searchName);
+		counterCurrency && setInputValue1(counterCurrency.searchName);
 	}, [baseCurrency, counterCurrency]);
 
 	return (
@@ -148,41 +150,45 @@ function CurrencyConverter() {
 				listItemRender={listItemRender}
 				onItemClick={(e, item) => {
 					item && setBaseCurrency(item);
-					item && setInputValue(item.longName);
+					item && setInputValue(item.searchName);
 					setDisplay(false);
 					setString(null);
 				}}
 				onInputChange={(e) => {
 					setInputValue(e.target.value);
-					const newData = currencies.current.filter((x) => x.longName.toLowerCase().includes(e.target.value.toLowerCase()));
+					const newData = currencies.current.filter((x) => x.searchName.toLowerCase().includes(e.target.value.toLowerCase()));
 					setFilteredCurrencies(newData);
 				}}
 				inputValue={inputValue}
 				onDropdownClosed={onDropdownClosed}
 				selectedValue={baseCurrency}
 				isLoading={loading.loadingDropdown}
+				EmptyResultMessage={'No Currencies Found'}
+				placeholder={'Enter currency...'}
 			/>
 			<ComboBoxComponent
 				dataSource={filteredCurrencies}
 				listItemRender={listItemRender}
 				onItemClick={(x, item) => {
 					item && setCounterCurrency(item);
-					item && setInputValue1(item.longName);
+					item && setInputValue1(item.searchName);
 					setDisplay(false);
 					setString(null);
 				}}
 				onInputChange={(e) => {
 					setInputValue1(e.target.value);
-					const newData = currencies.current.filter((x) => x.longName.toLowerCase().includes(e.target.value.toLowerCase()));
+					const newData = currencies.current.filter((x) => x.searchName.toLowerCase().includes(e.target.value.toLowerCase()));
 					setFilteredCurrencies(newData);
 				}}
 				inputValue={inputValue1}
 				onDropdownClosed={() => {
-					counterCurrency && setInputValue1(counterCurrency.longName);
+					counterCurrency && setInputValue1(counterCurrency.searchName);
 					setFilteredCurrencies(currencies.current);
 				}}
 				selectedValue={counterCurrency}
 				isLoading={loading.loadingDropdown}
+				EmptyResultMessage={'No Currencies Found'}
+				placeholder={'Enter currency...'}
 			/>
 			<div className="conversionMessage">{string && display && <p>{string}</p>}</div>
 			{loading.loadingCoversion && <FontAwesomeIcon icon={faSpinner} className="spinner" />}
