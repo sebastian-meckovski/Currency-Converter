@@ -12,7 +12,7 @@ To run the app
 - Install the dependencies using
 ### `npm i`
 - Start the development server:
-### - npm start
+### `npm start`
 This will launch the app in the browser on [http://localhost:4000](http://localhost:4000) and you can start using it!
 
 Alternativerly You can check out the hosted version of it using [this link](https://black-sand-034bc8103.2.azurestaticapps.net/)
