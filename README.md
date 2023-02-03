@@ -1,18 +1,27 @@
-# Getting Started with Create React App
+# Seb's Currency Converter
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This is a user-friendly and accessible currency conversion web app built with React. The app allows users to input an amount and select a currency to convert from and to. It then calculates the converted amount and displays the result. The input is validated to ensure proper user input and the app is built with accessibility in mind. 
+
+To run the app
+- Make sure you have [Node.js](https://nodejs.org/en/) installed. You can check the version by running the following cmd:
+### `node -v` 
+- Clone the repository by running the following command in CMD:
+### `git clone [repository URL]`
+- Navigate to the app directory using the following command:
+### `cd [app directory]`
+- Install the dependencies using
+### `npm i`
+- Start the development server:
+### `npm start`
+This will launch the app in the browser on [http://localhost:4000](http://localhost:4000) and you can start using it!
+
+Alternativerly You can check out the hosted version of it using [this link](https://black-sand-034bc8103.2.azurestaticapps.net/)
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
 ## Available Scripts
 
-In the project directory, you can run:
-
-### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+In the project directory, you also can run:
 
 ### `npm test`
 
@@ -38,33 +47,3 @@ If you aren't satisfied with the build tool and configuration choices, you can `
 Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
 You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
