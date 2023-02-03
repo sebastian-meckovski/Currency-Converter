@@ -79,7 +79,7 @@ function CurrencyConverter() {
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      setTime((prevTime) => prevTime - 1);
+      display && setTime((prevTime) => prevTime - 1);
     }, 1000);
 
     if (time === 0) {
@@ -87,7 +87,7 @@ function CurrencyConverter() {
       setConversionString(null);
     }
     return () => clearInterval(intervalId);
-  }, [time]);
+  }, [time, display]);
 
   useEffect(() => {
     fetchCurrencies();
