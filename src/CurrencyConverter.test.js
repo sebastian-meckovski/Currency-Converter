@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import CurrencyConverter from './CurrencyConverter';
-import { calculateRate, listItemRender } from './utils';
+import { calculateRate, isValidNumber } from './utils';
 
 test('Check for "Amount" label', () => {
 	render(<CurrencyConverter />);
@@ -21,3 +21,21 @@ test('calculateRate returns a number', () => {
 	expect(typeof result).toBe('string');
 	expect(result).toBe('750');
 });
+
+
+test('isValidNumber method', () => {
+	const result = isValidNumber(50);
+	const result2 = isValidNumber('50');
+	const result3 = isValidNumber(49.99);
+	const result4 = isValidNumber('49.99');
+	const result5 = isValidNumber('49.99.4');
+	const result6 = isValidNumber('213b');
+	expect(result).toBe(true);
+	expect(result2).toBe(true);
+	expect(result3).toBe(true);
+	expect(result4).toBe(true);
+	expect(result5).toBe(false);
+	expect(result6).toBe(false);
+});
+
+
