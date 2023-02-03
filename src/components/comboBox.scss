@@ -50,17 +50,24 @@
     flex-direction: column;
     &__listItem {
       display: flex;
-      padding: 2px;
       align-items: center;
+      margin: 0px 6px;
+      border-radius: 10px;
       &:hover {
-        background-color: rgba(0, 0, 0, 0.1);
+        background-color: #32589e;
+        * {
+          color: white;
+        }
       }
     }
   }
 }
 
 .active {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: #32589e;
+  * {
+    color: white;
+  }
 }
 
 .open {
