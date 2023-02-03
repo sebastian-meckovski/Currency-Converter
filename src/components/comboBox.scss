@@ -53,14 +53,14 @@
 			padding: 2px;
 			align-items: center;
 			&:hover {
-				background-color: gray;
+				background-color: rgba(0, 0, 0, 0.1);
 			}
 		}
 	}
 }
 
 .active {
-	background-color: gray;
+	background-color: rgba(0, 0, 0, 0.1);;
 }
 
 .open {

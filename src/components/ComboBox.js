@@ -162,7 +162,7 @@ export function ComboBox({
 									}}
 									key={i}
 									tabIndex={i}
-									className={`dropDown__listItem ${x === selectedValue ? 'active' : ''}`}
+									className={`comboBoxWrapper__dropDown__listItem ${x === selectedValue ? 'active' : ''}`}
 									onClick={(e) => {
 										handleClick(e, x);
 									}}
