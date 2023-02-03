@@ -25,7 +25,7 @@ export const isValidNumber = (str) => {
 	return pattern.test(str);
 };
 
-function decimalPlaces(num) {
+export function decimalPlaces(num) {
 	if (typeof num !== 'number') return false;
 	const parts = num.toString().split('.');
 	if (parts.length === 1) return 0;
