@@ -1,6 +1,6 @@
 import './CurrencyConverter.scss';
 import { useState, useEffect, useRef } from 'react';
-import { ComboBox as ComboBoxComponent } from './components/ComboBox';
+import { ComboBox as ComboBoxComponent } from 'seb-components-library';
 import { faExchangeAlt, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import exclusionList from './data/exclusionList';
